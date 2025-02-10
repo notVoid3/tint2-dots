@@ -1,22 +1,27 @@
 #!/bin/bash
 
-# Obtener el estado de la batería
-data=$(acpi -b)
-percentage=$(echo "$data" | grep -o '[0-9]\+%' | tr -d '%')
-status=$(echo "$data" | awk '{print $3}' | tr -d ',')
+# Ruta de los iconos
+ICON_PATH="$HOME/.config/tint2/icons"
 
-# Determinar el icono correspondiente
-if [[ "$status" == "Charging" ]]; then
-    icon="bat-charging.png"
-elif (( percentage == 100 )); then
-    icon="bat-full.png"
-elif (( percentage < 75 )); then
-    icon="bat-75.png"
-elif (( percentage < 50 )); then
-    icon="bat-50.png"
-elif (( percentage < 25 )); then
-    icon="bat-25.png"
+# Obtener estado de la batería
+BATTERY_INFO=$(acpi -b)
+BATTERY_PERCENT=$(echo "$BATTERY_INFO" | grep -o '[0-9]\+%' | tr -d '%')
+BATTERY_STATUS=$(echo "$BATTERY_INFO" | awk '{print $3}' | tr -d ',')
+
+# Determinar el icono a mostrar
+if [[ "$BATTERY_STATUS" == "Charging" || "$BATTERY_STATUS" == "Unknown" ]]; then
+    ICON="$ICON_PATH/bat-charging.svg"
+elif (( BATTERY_PERCENT == 100 )); then
+    ICON="$ICON_PATH/bat-full.svg"
+elif (( BATTERY_PERCENT < 75 )); then
+    ICON="$ICON_PATH/bat-75.svg"
+elif (( BATTERY_PERCENT < 50 )); then
+    ICON="$ICON_PATH/bat-50.svg"
+elif (( BATTERY_PERCENT < 25 )); then
+    ICON="$ICON_PATH/bat-25.png"
+else
+    ICON="$ICON_PATH/bat-full.svg"
 fi
 
-# Mostrar el resultado
-echo "$icon $percentage%"
+# Mostrar el icono
+echo "$ICON"
